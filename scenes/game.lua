@@ -59,10 +59,32 @@ local gameTick
 local onCollision
 local makeSection
 
-
------------------------------------------------
---*** Other Functions ***
------------------------------------------------
+-------------------------------------------------
+----*** Block initial ***
+-------------------------------------------------
+local block_move --setframe for block move
+local block_1 
+local block_2
+local block_1_2nd_line
+local block_2_2nd_line
+local new_section = false --indicate if next top section is open
+-------------------------------------------------
+----*** Block 1 linear speed ***
+-------------------------------------------------
+local block_1_left_x_speed = 0
+local block_1_right_x_speed = 0
+local block_1_up_y_speed = 0
+local block_1_down_y_speed = 0
+-------------------------------------------------
+----*** Block 3 linear speed ***
+-------------------------------------------------
+local block_2_left_x_speed = 0
+local block_2_right_x_speed = 0
+local block_2_up_y_speed = 0
+local block_2_down_y_speed = 0
+-------------------------------------------------
+----*** Other Functions ***
+-------------------------------------------------
 local function shakeScreen()
 	local function moveScreen() 
         screenGroup.x = math.random(1, 8)
@@ -153,17 +175,27 @@ function makeSection()
 
 	local yOffset = math.round(320/(sectionBlockAmount+1))
 
-	local block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
+	block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
 	block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
 	block_1.id = "block"
-	physics.addBody(block_1, "static")
-
-	local block_2 = display.newRect(gameGroup, x_2, block_1.y - block_1.height/2 - yOffset, 24, 24)
-	block_2:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
-	block_2.id = "block"
-	physics.addBody(block_2, "static")
+	physics.addBody(block_1, "kinematic")
+  if block_1.x >= _W/2 then
+    block_1:setLinearVelocity(block_1_right_x_speed,block_1_up_y_speed)
+  else
+    block_1:setLinearVelocity(block_1_left_x_speed,block_1_down_y_speed)
+  end
+  
+  block_2 = display.newRect(gameGroup, x_2, block_1.y - block_1.height/2 - yOffset, 24, 24)
+  block_2:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
+  block_2.id = "block"
+  physics.addBody(block_2, "kinematic")
+  if block_2.x >= _W/2 then
+    block_2:setLinearVelocity(block_2_right_x_speed,block_2_up_y_speed)
+  else
+    block_2:setLinearVelocity(block_2_left_x_speed,block_2_down_y_speed)
+  end
+  
 end
-
 function backgroundTouched(event)
 	local t = event.target
 	if event.phase == "began" and touchAllowed == true then 
@@ -270,7 +302,7 @@ function scene:create( event )
 	player = display.newImageRect(uiGroup, "images/player.png", 32, 32)
 	player.x = _W*0.5
 	player.y = _H*0.7
-	player:setFillColor(38 / 255, 38 / 255, 38 / 255) -- brick color 
+	--player:setFillColor(38 / 255, 38 / 255, 38 / 255) -- brick color 
 	player.id = "player"
 	player.isFixedRotation = true
 
