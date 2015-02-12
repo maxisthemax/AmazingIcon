@@ -65,21 +65,22 @@ local makeSection
 local block_move --setframe for block move
 local block_1 
 local block_2
+local block_drop
 local block_1_2nd_line
 local block_2_2nd_line
 local new_section = false --indicate if next top section is open
 -------------------------------------------------
 ----*** Block 1 linear speed ***
 -------------------------------------------------
-local block_1_left_x_speed = 0
-local block_1_right_x_speed = 0
+local block_1_left_x_speed = -200
+local block_1_right_x_speed = 200
 local block_1_up_y_speed = 0
 local block_1_down_y_speed = 0
 -------------------------------------------------
-----*** Block 3 linear speed ***
+----*** Block 2 linear speed ***
 -------------------------------------------------
-local block_2_left_x_speed = 0
-local block_2_right_x_speed = 0
+local block_2_left_x_speed = -200
+local block_2_right_x_speed = 200
 local block_2_up_y_speed = 0
 local block_2_down_y_speed = 0
 -------------------------------------------------
@@ -115,6 +116,7 @@ function gameOver()
 	playSound("gameover")
 	isGameOver = true
 	touchAllowed = false
+	new_section = false
 	shakeScreen()
 	local dbPath = system.pathForFile("gameinfo.db3", system.DocumentsDirectory)
 	local db = sqlite3.open(dbPath)
@@ -193,29 +195,64 @@ function makeSection()
     block_1.id = "block"
     physics.addBody(block_1, "kinematic")
     if currentScore >= level2 then
-      if currentScore == level3 then
-          block_1.bodyType = "dynamic"
+      if block_1.x >= _W/2 then
+        block_1:setLinearVelocity(block_1_left_x_speed,block_1_up_y_speed)
       else
-          if block_1.x >= _W/2 then
-            block_1:setLinearVelocity(block_1_left_x_speed,block_1_up_y_speed)
-          else
-            block_1:setLinearVelocity(block_1_right_x_speed,block_1_down_y_speed)
-          end
-       end   
+        block_1:setLinearVelocity(block_1_right_x_speed,block_1_down_y_speed)
+      end  
     end
   end
   if currentScore >= level4 then   
     block_2 = display.newRect(gameGroup, x_2, block_1.y - block_1.height/2 - yOffset, 24, 24)
     block_2:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
     block_2.id = "block"  
-    physics.addBody(block_2, "kinematic")   
-    if block_2.x >= _W/2 then
-      block_2:setLinearVelocity(block_2_left_x_speed,block_2_up_y_speed)
-    else
-      block_2:setLinearVelocity(block_2_right_x_speed,block_2_down_y_speed)
-    end
-  end  
+    physics.addBody(block_2, "kinematic") 
+    if currentScore >= level5 then 
+      if block_2.x >= _W/2 then
+        block_2:setLinearVelocity(block_2_left_x_speed,block_2_up_y_speed)
+      else
+        block_2:setLinearVelocity(block_2_right_x_speed,block_2_down_y_speed)
+      end
+    end 
+  end
+end   
+ 
+function block_move(event)
+if currentScore >= level2 then
+  if block_1.x >= _W then
+    block_1:setLinearVelocity(block_1_left_x_speed,0)
+  elseif block_1.x <= 0 then 
+    block_1:setLinearVelocity(block_1_right_x_speed,0)
+  end
 end
+
+if currentScore >= level5 then    
+  if block_2.x >= _W then
+    block_2:setLinearVelocity(block_2_left_x_speed,0)
+  elseif block_2.x <= 0 then 
+    block_2:setLinearVelocity(block_2_right_x_speed,0)
+  end
+end
+   
+if new_section == true then
+  if currentScore >= level2 then  
+    if block_1_2nd_line.x >= _W then
+        block_1_2nd_line:setLinearVelocity(block_1_left_x_speed,0)
+    elseif block_1_2nd_line.x <= 0 then 
+        block_1_2nd_line:setLinearVelocity(block_1_right_x_speed,0)
+    end
+  end
+    
+  if currentScore >= level5 then            
+    if block_2_2nd_line.x >= _W then
+      block_2_2nd_line:setLinearVelocity(block_2_left_x_speed,0)
+    elseif block_2_2nd_line.x <= 0 then 
+      block_2_2nd_line:setLinearVelocity(block_2_right_x_speed,0)
+    end
+  end     
+end
+end
+
 function backgroundTouched(event)
 	local t = event.target
 	if event.phase == "began" and touchAllowed == true then 
@@ -264,7 +301,7 @@ function gameTick(event)
 
 		local h = player.height/2
 		if player.y + h > _H then 
-			gameOver()
+			--gameOver()
 		end
 		
 		if player.y < _H*0.5 then 
@@ -282,7 +319,10 @@ function gameTick(event)
 
 			sectionGapTracking = sectionGapTracking + dif
 			if sectionGapTracking >= sectionGapHeight then 
-				sectionGapTracking = 0 
+				sectionGapTracking = 0
+				new_section = true
+				block_1_2nd_line = block_1
+				block_2_2nd_line = block_2
 				makeSection()
 			end
 		end
@@ -292,7 +332,7 @@ end
 function onCollision(event)
 	if event.object1 and event.object2 and isGameOver == false then  -- Make sure its only called once.
 		if event.object1.id == "block" and event.object2.id == "player" or event.object1.id == "player" and event.object2.id == "block" then 	
-			gameOver()
+			--gameOver()
 		elseif event.object1.id == "point" and event.object2.id == "player" or event.object1.id == "player" and event.object2.id == "point" then 	
 			if event.object1.id == "point" then 
 				display.remove(event.object1)
@@ -324,6 +364,20 @@ function scene:create( event )
 	text_score.y = 4
 	text_score:setFillColor(textColour[1],textColour[2],textColour[3])
 
+  local options =
+  {
+    width=32,
+    height=32,
+    numFrames = 1,
+    sheetContentWidth = 64,
+    sheetContentHeight = 64  -- height of original 1x size of entire sheet
+  }
+  local sequenceData = 
+  {
+    name = "player",
+    start = 1,
+    count = 1,
+  }
 	player = display.newImageRect(uiGroup, "images/player.png", 32, 32)
 	player.x = _W*0.5
 	player.y = _H*0.7
@@ -351,6 +405,7 @@ function scene:show( event )
        elseif ( phase == "did" ) then
         background:addEventListener("touch",backgroundTouched)
         Runtime:addEventListener("enterFrame",gameTick)
+        Runtime:addEventListener("enterFrame",block_move)
     		Runtime:addEventListener("collision",onCollision)
     end
 end
@@ -361,9 +416,10 @@ function scene:hide( event )
 
     if ( phase == "will" ) then
          physics.stop()
-        Runtime:removeEventListener("enterFrame",gameTick)
+    Runtime:removeEventListener("enterFrame",gameTick)
 		Runtime:removeEventListener("onCollision",onCollision)
-
+		Runtime:removeEventListener("enterFrame",block_move)
+    
     elseif ( phase == "did" ) then
     end
 end
