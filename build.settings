@@ -1,0 +1,69 @@
+-------------------------------------------------------------------------
+--Created by Mario Mraz
+--28miStudio
+--mraz.mario28@gmail.com
+
+--CoronaSDK version 2014 was used for this template.
+
+--You are not allowed to publish this template to the Google Play as it is. 
+--You need to work on it, improve it and replace the graphics. 
+
+-------------------------------------------------------------------------
+settings =
+{
+    plugins =
+    {
+     ["CoronaProvider.ads.admob"] =
+        {
+            publisherId = "com.coronalabs"
+        },
+        ["plugin.google.play.services"] =
+        {
+            publisherId = "com.coronalabs"
+        },
+        ["CoronaProvider.gameNetwork.google"] =
+        {
+            publisherId = "com.coronalabs",
+            supportedPlatforms = { android=true },
+        },
+    
+           },
+
+	orientation =
+ 	{
+		default = "portrait", --landscapeRight
+		supported =
+ 		{
+			"portrait",
+		}
+	},
+
+	android =
+	{
+		plist =
+		{
+            UIStatusBarHidden = true,
+            CFBundleIconFiles = {
+                "Icon-xxxhdpi.png",
+                "Icon-xxhdpi.png",
+                "Icon-xhdpi.png",
+                "Icon-hdpi.png",
+                "Icon-mdpi.png",
+                "Icon-ldpi.png",
+            }
+		}
+	},
+
+ android =
+    {
+        googlePlayGamesAppId = "114215624720",
+        usesPermissions =
+        {
+            "android.permission.INTERNET",
+            "android.permission.ACCESS_NETWORK_STATE",
+            "android.permission.READ_PHONE_STATE",
+        }
+    }
+}
+
+
