@@ -180,9 +180,9 @@ function makeSection()
 	block_1.id = "block"
 	physics.addBody(block_1, "kinematic")
   if block_1.x >= _W/2 then
-    block_1:setLinearVelocity(block_1_right_x_speed,block_1_up_y_speed)
+    block_1:setLinearVelocity(block_1_left_x_speed,block_1_up_y_speed)
   else
-    block_1:setLinearVelocity(block_1_left_x_speed,block_1_down_y_speed)
+    block_1:setLinearVelocity(block_1_right_x_speed,block_1_down_y_speed)
   end
   
   block_2 = display.newRect(gameGroup, x_2, block_1.y - block_1.height/2 - yOffset, 24, 24)
@@ -190,9 +190,9 @@ function makeSection()
   block_2.id = "block"
   physics.addBody(block_2, "kinematic")
   if block_2.x >= _W/2 then
-    block_2:setLinearVelocity(block_2_right_x_speed,block_2_up_y_speed)
+    block_2:setLinearVelocity(block_2_left_x_speed,block_2_up_y_speed)
   else
-    block_2:setLinearVelocity(block_2_left_x_speed,block_2_down_y_speed)
+    block_2:setLinearVelocity(block_2_right_x_speed,block_2_down_y_speed)
   end
   
 end
