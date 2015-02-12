@@ -85,6 +85,19 @@ local block_2_down_y_speed = 0
 -------------------------------------------------
 ----*** Other Functions ***
 -------------------------------------------------
+------level0 empty
+local level1 = math.random(9,11) --1 block
+local level2 = math.random(19,21)--1 block moving
+local level3 = math.random(23,27)--1 block start drop
+local level4 = math.random(29,31)--2 block
+
+local level5 = math.random(39,41)--
+local level6 = math.random(49,51)--
+local level7 = math.random(59,61)--
+local level8 = math.random(59,61)--
+-------------------------------------------------
+----*** Other Functions ***
+-------------------------------------------------
 local function shakeScreen()
 	local function moveScreen() 
         screenGroup.x = math.random(1, 8)
@@ -174,27 +187,34 @@ function makeSection()
 	local x_2 = mR( width_1-xOffset, width_1+sectionGapWidth+xOffset )
 
 	local yOffset = math.round(320/(sectionBlockAmount+1))
-
-	block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
-	block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
-	block_1.id = "block"
-	physics.addBody(block_1, "kinematic")
-  if block_1.x >= _W/2 then
-    block_1:setLinearVelocity(block_1_left_x_speed,block_1_up_y_speed)
-  else
-    block_1:setLinearVelocity(block_1_right_x_speed,block_1_down_y_speed)
+  if currentScore >= level1 then
+    block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
+    block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
+    block_1.id = "block"
+    physics.addBody(block_1, "kinematic")
+    if currentScore >= level2 then
+      if currentScore == level3 then
+          block_1.bodyType = "dynamic"
+      else
+          if block_1.x >= _W/2 then
+            block_1:setLinearVelocity(block_1_left_x_speed,block_1_up_y_speed)
+          else
+            block_1:setLinearVelocity(block_1_right_x_speed,block_1_down_y_speed)
+          end
+       end   
+    end
   end
-  
-  block_2 = display.newRect(gameGroup, x_2, block_1.y - block_1.height/2 - yOffset, 24, 24)
-  block_2:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
-  block_2.id = "block"
-  physics.addBody(block_2, "kinematic")
-  if block_2.x >= _W/2 then
-    block_2:setLinearVelocity(block_2_left_x_speed,block_2_up_y_speed)
-  else
-    block_2:setLinearVelocity(block_2_right_x_speed,block_2_down_y_speed)
-  end
-  
+  if currentScore >= level4 then   
+    block_2 = display.newRect(gameGroup, x_2, block_1.y - block_1.height/2 - yOffset, 24, 24)
+    block_2:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
+    block_2.id = "block"  
+    physics.addBody(block_2, "kinematic")   
+    if block_2.x >= _W/2 then
+      block_2:setLinearVelocity(block_2_left_x_speed,block_2_up_y_speed)
+    else
+      block_2:setLinearVelocity(block_2_right_x_speed,block_2_down_y_speed)
+    end
+  end  
 end
 function backgroundTouched(event)
 	local t = event.target
@@ -212,6 +232,11 @@ function backgroundTouched(event)
 		local Power = sidePower
 		if event.x < _W*0.5 then 
 			Power = -sidePower
+			player:applyTorque(-0.05)
+			player:applyForce(-0.05,0,player.x,player.y)
+			else
+			player:applyTorque(0.05)
+			player:applyForce(0.05,0,player.x,player.y)
 		end
 
 		player:setLinearVelocity(0,0)
