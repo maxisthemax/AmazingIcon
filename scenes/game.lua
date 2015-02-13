@@ -35,14 +35,18 @@ local tutorialActive = true
 local currentScore = 0 
 local bestScore = 0 
 local worldGravity = 30 
-local jump = -0.15		
+local jump = -0.25		
 local sidePower = 0.03	
-
+local playergravity = 2.5
+local playerlefttorque = -0.5
+local playerrightttorque = 0.5
+local playerlefttforce = -0.5
+local playerrighttforce = 0.5
 local sectionGapWidth = 100	
 local sectionGapHeight = 320
 local sectionGapTracking = 0 
 local sectionBlockAmount = 2 
-local sectionSpeed = 1.2	
+local sectionSpeed = 1.3	
 local nextSectionWidth = 0  
 local useColour = 1 	
 local colorInt = 0 	
@@ -58,7 +62,7 @@ local gameOver
 local gameTick
 local onCollision
 local makeSection
-
+local text_warning
 -------------------------------------------------
 ----*** Block initial ***
 -------------------------------------------------
@@ -87,7 +91,7 @@ local block_2_down_y_speed = 0
 ----*** Other Functions ***
 -------------------------------------------------
 ------level0 empty
-local level1 = math.random(9,11) --1 block
+local level1 = math.random(3,5) --1 block
 local level2 = math.random(19,21)--1 block moving
 local level3 = math.random(23,27)--1 block start drop
 local level4 = math.random(29,31)--2 block
@@ -194,6 +198,19 @@ function makeSection()
     block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
     block_1.id = "block"
     physics.addBody(block_1, "kinematic")
+    if currentScore == level1+1 then
+    text_warning = display.newText({parent=uiGroup,text="!",font=native.systemFont,fontSize=60})
+    text_warning.anchorX = 0.5
+    text_warning.anchorY = 0.5
+    text_warning.x = player.x+100
+    text_warning.y = player.y+50
+    text_warning:setFillColor(1, 0.2, 0.2)
+    else
+    if text_warning ~= null then
+    display.remove ( text_warning )
+    text_warning = nil
+    end
+    end
     if currentScore >= level2 then
       if block_1.x >= _W/2 then
         block_1:setLinearVelocity(block_1_left_x_speed,block_1_up_y_speed)
@@ -269,13 +286,17 @@ function backgroundTouched(event)
 		local Power = sidePower
 		if event.x < _W*0.5 then 
 			Power = -sidePower
-			player:applyTorque(-0.05)
-			player:applyForce(-0.05,0,player.x,player.y)
+      if player.angularVelocity > -600 then
+        player:applyTorque(playerlefttorque)
+        player:applyForce(playerlefttforce,0,player.x,player.y)
+			end
 			else
-			player:applyTorque(0.05)
-			player:applyForce(0.05,0,player.x,player.y)
+			if player.angularVelocity < 600 then
+        player:applyTorque(playerrightttorque)
+        player:applyForce(playerrighttforce,0,player.x,player.y)
 		end
-
+		end
+    player.gravityScale = playergravity
 		player:setLinearVelocity(0,0)
 		player:applyLinearImpulse( Power, jump, player.x, player.y )
 
