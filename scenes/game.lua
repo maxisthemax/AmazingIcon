@@ -193,24 +193,30 @@ function makeSection()
 	local x_2 = mR( width_1-xOffset, width_1+sectionGapWidth+xOffset )
 
 	local yOffset = math.round(320/(sectionBlockAmount+1))
-  if currentScore >= level1 then
-    block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
-    block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
-    block_1.id = "block"
-    physics.addBody(block_1, "kinematic")
-    if currentScore == level1+1 then
+    if currentScore == (level1+1 or level2+1 or level3+1) then
     text_warning = display.newText({parent=uiGroup,text="!",font=native.systemFont,fontSize=60})
     text_warning.anchorX = 0.5
     text_warning.anchorY = 0.5
     text_warning.x = player.x+100
     text_warning.y = player.y+50
     text_warning:setFillColor(1, 0.2, 0.2)
-    else
-    if text_warning ~= null then
+    end	
+    if currentScore == (level1+2 or level2+2 or level2+3) then
+	  if text_warning ~= null then
     display.remove ( text_warning )
     text_warning = nil
     end
-    end
+    block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
+    block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
+    block_1.id = "block"
+    physics.addBody(block_1, "dynamic")
+    return
+	end
+  if currentScore >= level1 then
+    block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
+    block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
+    block_1.id = "block"
+    physics.addBody(block_1, "kinematic")
     if currentScore >= level2 then
       if block_1.x >= _W/2 then
         block_1:setLinearVelocity(block_1_left_x_speed,block_1_up_y_speed)
@@ -322,7 +328,7 @@ function gameTick(event)
 
 		local h = player.height/2
 		if player.y + h > _H then 
-			--gameOver()
+			gameOver()
 		end
 		
 		if player.y < _H*0.5 then 
@@ -353,7 +359,7 @@ end
 function onCollision(event)
 	if event.object1 and event.object2 and isGameOver == false then  -- Make sure its only called once.
 		if event.object1.id == "block" and event.object2.id == "player" or event.object1.id == "player" and event.object2.id == "block" then 	
-			--gameOver()
+			gameOver()
 		elseif event.object1.id == "point" and event.object2.id == "player" or event.object1.id == "player" and event.object2.id == "point" then 	
 			if event.object1.id == "point" then 
 				display.remove(event.object1)
