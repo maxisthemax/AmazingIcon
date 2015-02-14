@@ -35,18 +35,14 @@ local tutorialActive = true
 local currentScore = 0 
 local bestScore = 0 
 local worldGravity = 30 
-local jump = -0.25		
+local jump = -0.15		
 local sidePower = 0.03	
-local playergravity = 2.5
-local playerlefttorque = -0.5
-local playerrightttorque = 0.5
-local playerlefttforce = -0.5
-local playerrighttforce = 0.5
+
 local sectionGapWidth = 100	
 local sectionGapHeight = 320
 local sectionGapTracking = 0 
 local sectionBlockAmount = 2 
-local sectionSpeed = 1.3	
+local sectionSpeed = 1.2	
 local nextSectionWidth = 0  
 local useColour = 1 	
 local colorInt = 0 	
@@ -62,47 +58,20 @@ local gameOver
 local gameTick
 local onCollision
 local makeSection
-local text_warning
--------------------------------------------------
-----*** Block initial ***
--------------------------------------------------
-local block_move --setframe for block move
-local block_1 
-local block_2
-local block_drop
-local block_1_2nd_line
-local block_2_2nd_line
-local new_section = false --indicate if next top section is open
--------------------------------------------------
-----*** Block 1 linear speed ***
--------------------------------------------------
-local block_1_left_x_speed = -200
-local block_1_right_x_speed = 200
-local block_1_up_y_speed = 0
-local block_1_down_y_speed = 0
--------------------------------------------------
-----*** Block 2 linear speed ***
--------------------------------------------------
-local block_2_left_x_speed = -200
-local block_2_right_x_speed = 200
-local block_2_up_y_speed = 0
-local block_2_down_y_speed = 0
--------------------------------------------------
-----*** Other Functions ***
--------------------------------------------------
-------level0 empty
-local level1 = math.random(3,5) --1 block
-local level2 = math.random(19,21)--1 block moving
-local level3 = math.random(23,27)--1 block start drop
-local level4 = math.random(29,31)--2 block
 
-local level5 = math.random(39,41)--
-local level6 = math.random(49,51)--
-local level7 = math.random(59,61)--
-local level8 = math.random(59,61)--
--------------------------------------------------
-----*** Other Functions ***
--------------------------------------------------
+
+local level1 = math.random(3,5) --1 block
+--local level2 = math.random(9,11)--1 block moving
+--local level3 = math.random(23,27)--1 block start drop
+local level2 = math.random(30,33)--2 block
+
+--local level5 = math.random(39,41)--
+--local level6 = math.random(49,51)--
+--local level7 = math.random(59,61)--
+--local level8 = math.random(59,61)--
+-----------------------------------------------
+--*** Other Functions ***
+-----------------------------------------------
 local function shakeScreen()
 	local function moveScreen() 
         screenGroup.x = math.random(1, 8)
@@ -120,7 +89,6 @@ function gameOver()
 	playSound("gameover")
 	isGameOver = true
 	touchAllowed = false
-	new_section = false
 	shakeScreen()
 	local dbPath = system.pathForFile("gameinfo.db3", system.DocumentsDirectory)
 	local db = sqlite3.open(dbPath)
@@ -156,8 +124,19 @@ function updateScore()
 		end
 	end
 end
-
+local random1 = math.random(2,4)
+local block_1_y = 0
+local block_1_height = 0
 function makeSection()
+
+if (currentScore < level1) then  sectionGapWidth = 200  sectionGapHeight = 200 end
+if (currentScore > level2) then  sectionGapWidth = 200 sectionGapHeight = 320 end
+if (currentScore < level1) then  sectionGapWidth = 160 end
+if (currentScore > level1+60) then  sectionGapWidth = 140 end
+if (currentScore > level1+70) then  sectionGapWidth = 120 end
+if (currentScore > level1+80) then  sectionGapWidth = 100 end
+if (currentScore > level1+90) then  sectionGapWidth = 120 end
+if (currentScore > level1+100) then  sectionGapWidth = 100 end
 		local width_1, width_2 
 	if nextSectionWidth ~= 0 then 
 		width_1 = nextSectionWidth
@@ -193,87 +172,30 @@ function makeSection()
 	local x_2 = mR( width_1-xOffset, width_1+sectionGapWidth+xOffset )
 
 	local yOffset = math.round(320/(sectionBlockAmount+1))
-    if currentScore == (level1+1 or level2+1 or level3+1) then
-    text_warning = display.newText({parent=uiGroup,text="!",font=native.systemFont,fontSize=60})
-    text_warning.anchorX = 0.5
-    text_warning.anchorY = 0.5
-    text_warning.x = player.x+100
-    text_warning.y = player.y+50
-    text_warning:setFillColor(1, 0.2, 0.2)
-    end	
-    if currentScore == (level1+2 or level2+2 or level2+3) then
-	  if text_warning ~= null then
-    display.remove ( text_warning )
-    text_warning = nil
-    end
-    block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
-    block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
-    block_1.id = "block"
-    physics.addBody(block_1, "dynamic")
-    return
-	end
-  if currentScore >= level1 then
-    block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
-    block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
-    block_1.id = "block"
-    physics.addBody(block_1, "kinematic")
-    if currentScore >= level2 then
-      if block_1.x >= _W/2 then
-        block_1:setLinearVelocity(block_1_left_x_speed,block_1_up_y_speed)
-      else
-        block_1:setLinearVelocity(block_1_right_x_speed,block_1_down_y_speed)
-      end  
-    end
-  end
-  if currentScore >= level4 then   
-    block_2 = display.newRect(gameGroup, x_2, block_1.y - block_1.height/2 - yOffset, 24, 24)
-    block_2:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
-    block_2.id = "block"  
-    physics.addBody(block_2, "kinematic") 
-    if currentScore >= level5 then 
-      if block_2.x >= _W/2 then
-        block_2:setLinearVelocity(block_2_left_x_speed,block_2_up_y_speed)
-      else
-        block_2:setLinearVelocity(block_2_right_x_speed,block_2_down_y_speed)
-      end
-    end 
-  end
-end   
- 
-function block_move(event)
+	
+if currentScore == (random1)then
+random1 = random1 + math.random(9,10)
+  local block_drop = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
+  block_drop:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
+  block_drop.id = "block"
+  physics.addBody(block_drop, "dynamic",{bounce=0.6})
+  return 
+end
+if currentScore >= level1 then
+  local block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
+  block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
+  block_1.id = "block"
+  physics.addBody(block_1, "static")
+  block_1_y = block_1.y
+  block_1_height = block_1.height
+end
 if currentScore >= level2 then
-  if block_1.x >= _W then
-    block_1:setLinearVelocity(block_1_left_x_speed,0)
-  elseif block_1.x <= 0 then 
-    block_1:setLinearVelocity(block_1_right_x_speed,0)
-  end
+  local block_2 = display.newRect(gameGroup, x_2, block_1_y - block_1_height/2 - yOffset, 24, 24)
+  block_2:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
+  block_2.id = "block"
+  physics.addBody(block_2, "static")
 end
-
-if currentScore >= level5 then    
-  if block_2.x >= _W then
-    block_2:setLinearVelocity(block_2_left_x_speed,0)
-  elseif block_2.x <= 0 then 
-    block_2:setLinearVelocity(block_2_right_x_speed,0)
-  end
-end
-   
-if new_section == true then
-  if currentScore >= level2 then  
-    if block_1_2nd_line.x >= _W then
-        block_1_2nd_line:setLinearVelocity(block_1_left_x_speed,0)
-    elseif block_1_2nd_line.x <= 0 then 
-        block_1_2nd_line:setLinearVelocity(block_1_right_x_speed,0)
-    end
-  end
-    
-  if currentScore >= level5 then            
-    if block_2_2nd_line.x >= _W then
-      block_2_2nd_line:setLinearVelocity(block_2_left_x_speed,0)
-    elseif block_2_2nd_line.x <= 0 then 
-      block_2_2nd_line:setLinearVelocity(block_2_right_x_speed,0)
-    end
-  end     
-end
+	
 end
 
 function backgroundTouched(event)
@@ -292,17 +214,8 @@ function backgroundTouched(event)
 		local Power = sidePower
 		if event.x < _W*0.5 then 
 			Power = -sidePower
-      if player.angularVelocity > -600 then
-        player:applyTorque(playerlefttorque)
-        player:applyForce(playerlefttforce,0,player.x,player.y)
-			end
-			else
-			if player.angularVelocity < 600 then
-        player:applyTorque(playerrightttorque)
-        player:applyForce(playerrighttforce,0,player.x,player.y)
 		end
-		end
-    player.gravityScale = playergravity
+
 		player:setLinearVelocity(0,0)
 		player:applyLinearImpulse( Power, jump, player.x, player.y )
 
@@ -335,7 +248,6 @@ function gameTick(event)
 			local dif = math.ceil( (lastYPos - player.y)*sectionSpeed ) 
 			player.y = _H*0.5
 			lastYPos = player.y 
-
 			for i=gameGroup.numChildren, 1, -1 do
 				gameGroup[i]:translate(0,dif)
 				if gameGroup[i].y - gameGroup[i].height > _H then 
@@ -343,17 +255,15 @@ function gameTick(event)
 					gameGroup[i] = nil 
 				end
 			end
-
 			sectionGapTracking = sectionGapTracking + dif
 			if sectionGapTracking >= sectionGapHeight then 
-				sectionGapTracking = 0
-				new_section = true
-				block_1_2nd_line = block_1
-				block_2_2nd_line = block_2
+				sectionGapTracking = 0 
 				makeSection()
 			end
 		end
 	end
+	    local memUsage_str = string.format( "MEMORY = %.3f KB", collectgarbage( "count" ) )
+   print( memUsage_str, "TEXTURE = "..(system.getInfo("textureMemoryUsed") / (1024 * 1024) ) )
 end
 
 function onCollision(event)
@@ -391,24 +301,10 @@ function scene:create( event )
 	text_score.y = 4
 	text_score:setFillColor(textColour[1],textColour[2],textColour[3])
 
-  local options =
-  {
-    width=32,
-    height=32,
-    numFrames = 1,
-    sheetContentWidth = 64,
-    sheetContentHeight = 64  -- height of original 1x size of entire sheet
-  }
-  local sequenceData = 
-  {
-    name = "player",
-    start = 1,
-    count = 1,
-  }
 	player = display.newImageRect(uiGroup, "images/player.png", 32, 32)
 	player.x = _W*0.5
 	player.y = _H*0.7
-	--player:setFillColor(38 / 255, 38 / 255, 38 / 255) -- brick color 
+	player:setFillColor(38 / 255, 38 / 255, 38 / 255) -- brick color 
 	player.id = "player"
 	player.isFixedRotation = true
 
@@ -432,7 +328,6 @@ function scene:show( event )
        elseif ( phase == "did" ) then
         background:addEventListener("touch",backgroundTouched)
         Runtime:addEventListener("enterFrame",gameTick)
-        Runtime:addEventListener("enterFrame",block_move)
     		Runtime:addEventListener("collision",onCollision)
     end
 end
@@ -443,10 +338,9 @@ function scene:hide( event )
 
     if ( phase == "will" ) then
          physics.stop()
-    Runtime:removeEventListener("enterFrame",gameTick)
+        Runtime:removeEventListener("enterFrame",gameTick)
 		Runtime:removeEventListener("onCollision",onCollision)
-		Runtime:removeEventListener("enterFrame",block_move)
-    
+
     elseif ( phase == "did" ) then
     end
 end
