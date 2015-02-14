@@ -163,7 +163,8 @@ function makeSection()
 	block_2.id = "block"
 	physics.addBody(block_2, "static")
 end
-
+local spinleft = false
+local spinright = false
 function backgroundTouched(event)
 	local t = event.target
 	if event.phase == "began" and touchAllowed == true then 
@@ -176,8 +177,6 @@ function backgroundTouched(event)
 			display.remove(tutorial)
 			tutorial = nil
 		end
-local spinleft = false
-local spinright = false
     local Power = sidePower
     if event.x < _W*0.5 then 
       Power = -sidePower
