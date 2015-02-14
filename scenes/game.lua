@@ -60,15 +60,6 @@ local onCollision
 local makeSection
 
 
-local level1 = math.random(3,5) --1 block
---local level2 = math.random(9,11)--1 block moving
---local level3 = math.random(23,27)--1 block start drop
-local level2 = math.random(30,33)--2 block
-
---local level5 = math.random(39,41)--
---local level6 = math.random(49,51)--
---local level7 = math.random(59,61)--
---local level8 = math.random(59,61)--
 -----------------------------------------------
 --*** Other Functions ***
 -----------------------------------------------
@@ -124,19 +115,8 @@ function updateScore()
 		end
 	end
 end
-local random1 = math.random(2,4)
-local block_1_y = 0
-local block_1_height = 0
-function makeSection()
 
-if (currentScore < level1) then  sectionGapWidth = 200  sectionGapHeight = 200 end
-if (currentScore > level2) then  sectionGapWidth = 200 sectionGapHeight = 320 end
-if (currentScore < level1) then  sectionGapWidth = 160 end
-if (currentScore > level1+60) then  sectionGapWidth = 140 end
-if (currentScore > level1+70) then  sectionGapWidth = 120 end
-if (currentScore > level1+80) then  sectionGapWidth = 100 end
-if (currentScore > level1+90) then  sectionGapWidth = 120 end
-if (currentScore > level1+100) then  sectionGapWidth = 100 end
+function makeSection()
 		local width_1, width_2 
 	if nextSectionWidth ~= 0 then 
 		width_1 = nextSectionWidth
@@ -172,30 +152,16 @@ if (currentScore > level1+100) then  sectionGapWidth = 100 end
 	local x_2 = mR( width_1-xOffset, width_1+sectionGapWidth+xOffset )
 
 	local yOffset = math.round(320/(sectionBlockAmount+1))
-	
-if currentScore == (random1)then
-random1 = random1 + math.random(9,10)
-  local block_drop = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
-  block_drop:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
-  block_drop.id = "block"
-  physics.addBody(block_drop, "dynamic",{bounce=0.6})
-  return 
-end
-if currentScore >= level1 then
-  local block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
-  block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
-  block_1.id = "block"
-  physics.addBody(block_1, "static")
-  block_1_y = block_1.y
-  block_1_height = block_1.height
-end
-if currentScore >= level2 then
-  local block_2 = display.newRect(gameGroup, x_2, block_1_y - block_1_height/2 - yOffset, 24, 24)
-  block_2:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
-  block_2.id = "block"
-  physics.addBody(block_2, "static")
-end
-	
+
+	local block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
+	block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
+	block_1.id = "block"
+	physics.addBody(block_1, "static")
+  
+	local block_2 = display.newRect(gameGroup, x_2, block_1.y - block_1.height/2 - yOffset, 24, 24)
+	block_2:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
+	block_2.id = "block"
+	physics.addBody(block_2, "static")
 end
 
 function backgroundTouched(event)
@@ -210,11 +176,33 @@ function backgroundTouched(event)
 			display.remove(tutorial)
 			tutorial = nil
 		end
-
-		local Power = sidePower
-		if event.x < _W*0.5 then 
-			Power = -sidePower
-		end
+local spinleft = false
+local spinright = false
+    local Power = sidePower
+    if event.x < _W*0.5 then 
+      Power = -sidePower
+      spinleft = true
+      if player.angularVelocity > -1 then
+        if spinright == true then 
+        spinright = false
+        player:applyTorque(-0.5)
+        player:applyTorque(-0.5)
+        else
+        player:applyTorque(-0.5)
+        end
+      end  
+      else
+      spinright = true
+      if player.angularVelocity < 1 then
+        if spinleft == true then 
+        spinleft = false
+        player:applyTorque(0.5)
+        player:applyTorque(0.5)
+        else
+        player:applyTorque(0.5)
+        end	
+      end  		
+    end
 
 		player:setLinearVelocity(0,0)
 		player:applyLinearImpulse( Power, jump, player.x, player.y )
@@ -248,6 +236,7 @@ function gameTick(event)
 			local dif = math.ceil( (lastYPos - player.y)*sectionSpeed ) 
 			player.y = _H*0.5
 			lastYPos = player.y 
+
 			for i=gameGroup.numChildren, 1, -1 do
 				gameGroup[i]:translate(0,dif)
 				if gameGroup[i].y - gameGroup[i].height > _H then 
@@ -255,6 +244,7 @@ function gameTick(event)
 					gameGroup[i] = nil 
 				end
 			end
+
 			sectionGapTracking = sectionGapTracking + dif
 			if sectionGapTracking >= sectionGapHeight then 
 				sectionGapTracking = 0 
@@ -262,8 +252,6 @@ function gameTick(event)
 			end
 		end
 	end
-	    local memUsage_str = string.format( "MEMORY = %.3f KB", collectgarbage( "count" ) )
-   print( memUsage_str, "TEXTURE = "..(system.getInfo("textureMemoryUsed") / (1024 * 1024) ) )
 end
 
 function onCollision(event)
@@ -304,7 +292,7 @@ function scene:create( event )
 	player = display.newImageRect(uiGroup, "images/player.png", 32, 32)
 	player.x = _W*0.5
 	player.y = _H*0.7
-	player:setFillColor(38 / 255, 38 / 255, 38 / 255) -- brick color 
+	--player:setFillColor(38 / 255, 38 / 255, 38 / 255) -- brick color 
 	player.id = "player"
 	player.isFixedRotation = true
 
@@ -338,6 +326,7 @@ function scene:hide( event )
 
     if ( phase == "will" ) then
          physics.stop()
+         background:removeEventListener("touch",backgroundTouched)
         Runtime:removeEventListener("enterFrame",gameTick)
 		Runtime:removeEventListener("onCollision",onCollision)
 
