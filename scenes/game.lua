@@ -157,12 +157,13 @@ function makeSection()
 	block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
 	block_1.id = "block"
 	physics.addBody(block_1, "static")
-  
+
 	local block_2 = display.newRect(gameGroup, x_2, block_1.y - block_1.height/2 - yOffset, 24, 24)
 	block_2:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
 	block_2.id = "block"
 	physics.addBody(block_2, "static")
 end
+
 local spinleft = false
 local spinright = false
 function backgroundTouched(event)
@@ -177,9 +178,10 @@ function backgroundTouched(event)
 			display.remove(tutorial)
 			tutorial = nil
 		end
-    local Power = sidePower
-    if event.x < _W*0.5 then 
-      Power = -sidePower
+
+		local Power = sidePower
+		if event.x < _W*0.5 then 
+			Power = -sidePower
       spinleft = true
       if player.angularVelocity > -1 then
         if spinright == true then 
@@ -201,7 +203,7 @@ function backgroundTouched(event)
         player:applyTorque(0.5)
         end	
       end  		
-    end
+		end
 
 		player:setLinearVelocity(0,0)
 		player:applyLinearImpulse( Power, jump, player.x, player.y )
