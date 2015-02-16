@@ -82,7 +82,8 @@ local gameOver
 local gameTick
 local onCollision
 local makeSection
-
+local level1 = math.random(3,5)
+local level2 = math.random(10,12)
 
 -----------------------------------------------
 --*** Other Functions ***
@@ -181,23 +182,23 @@ function makeSection()
 	local x_2 = mR( width_1-xOffset, width_1+sectionGapWidth+xOffset )
 
 	local yOffset = math.round(320/(sectionBlockAmount+1))
-
 	local block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
+if currentScore > level1 then
 	block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
 	block_1:setStrokeColor( 0, 0 ,0 )
 	block_1.strokeWidth = 3
 	block_1.id = "block"
-	
 	physics.addBody(block_1, "static")
-
+end
 	local block_2 = display.newRect(gameGroup, x_2, block_1.y - block_1.height/2 - yOffset, 24, 24)
+if currentScore > level2 then
 	block_2:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
 	block_2:setStrokeColor( 0, 0 ,0 )
  	block_2.strokeWidth = 3
 	block_2.id = "block"
 	physics.addBody(block_2, "static")
 end
-
+end
 local spinleft = false
 local spinright = false
 function backgroundTouched(event)
