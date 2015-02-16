@@ -48,9 +48,33 @@ local useColour = 1
 local colorInt = 0 	
 local colorMax = 3	
 local lineColors = {
+	{255/255, 0/255, 255/255},
+	{128/255, 255/255, 102/255},
+	{189/255, 255/255, 122/255},
+   
 	{184/255, 239/255, 206/255},
 	{233/255, 184/255, 239/255},
-	{200/255, 200/255, 200/255},  -- line Color
+	{200/255, 200/255, 200/255}, 
+	
+	{255/255, 153/255, 102/255},
+	{255/255, 230/255, 102/255},
+	{127/255, 255/255, 102/255},
+  
+	{235/255, 0/255, 39/255},
+	{127/255, 255/255, 102/255},
+	{255/255, 10/255, 71/255},
+  
+	{0/255, 205/255, 255/255},
+	{119/255, 255/255, 61/255},
+	{255/255, 82/255, 82/255},  
+  
+	{255/255, 204/255, 255/255},
+	{255/255, 255/255, 204/255},
+	{143/255, 143/255, 255/255},    
+  
+	{255/255, 255/255, 143/255},
+	{20/255, 20/255, 255/255},
+	{102/255, 204/255, 153/255},    
 }
 local backgroundTouched
 local updateScore 
@@ -312,9 +336,9 @@ function scene:create( event )
 	local playerShape = { 0,-h, w,0, 0,h, -w,0 }
 	physics.addBody(player, "dynamic",{shape=playerShape, bounce=0.5, density=0.019})
 
-	tutorial = display.newImageRect(uiGroup, "images/tutorial.png", 160, 140)
-	tutorial.x = player.x 
-	tutorial.y = player.y - 12
+	tutorial = display.newImageRect(uiGroup, "images/tutorial.png",160, 140)
+  tutorial.x = player.x 
+  tutorial.y = player.y
 
 	makeSection()
 end

@@ -117,7 +117,7 @@ function scene:create( event )
 
 
     button_leader = display.newImageRect(bgGroup,"images/button_leader.png",60,52)
-    button_leader.x = button_play.x
+    button_leader.x = button_play.x + 40
     button_leader.y = button_play.y + 80
     button_leader.id = "leader"
 
@@ -126,10 +126,10 @@ function scene:create( event )
     button_home.y = button_leader.y
     button_home.id = "home"
     
-    button_share = display.newImageRect(bgGroup,"images/button_share.png",60,52)
-    button_share.x = button_leader.x + 80
-    button_share.y = button_leader.y
-    button_share.id = "share"
+    --button_share = display.newImageRect(bgGroup,"images/button_share.png",60,52)
+    --button_share.x = button_leader.x + 80
+    --button_share.y = button_leader.y
+    --button_share.id = "share"
     
     local gotReward = false
     local rewardX = overRect.x + 52
