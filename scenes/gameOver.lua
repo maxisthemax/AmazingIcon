@@ -110,22 +110,27 @@ function scene:create( event )
     scoreText2.y = overRect.y + 39
     scoreText2:setFillColor(0)
 
-    button_play = display.newImageRect(bgGroup,"images/button_play.png",114,36)
+    button_play = display.newImageRect(bgGroup,"images/button_play.png",80,72)
     button_play.x = _W*0.5
-    button_play.y = _H*0.6
+    button_play.y = _H*0.65
     button_play.id = "play"
 
 
-    button_leader = display.newImageRect(bgGroup,"images/button_med_leader.png",82,36)
-    button_leader.x = button_play.x + 48
-    button_leader.y = button_play.y + 56
+    button_leader = display.newImageRect(bgGroup,"images/button_leader.png",60,52)
+    button_leader.x = button_play.x
+    button_leader.y = button_play.y + 80
     button_leader.id = "leader"
 
-    button_home = display.newImageRect(bgGroup,"images/button_med_home.png",82,36)
-    button_home.x = button_play.x - 48
-    button_home.y = button_play.y + 56
+    button_home = display.newImageRect(bgGroup,"images/button_home.png",60,52)
+    button_home.x = button_leader.x - 80
+    button_home.y = button_leader.y
     button_home.id = "home"
-
+    
+    button_share = display.newImageRect(bgGroup,"images/button_share.png",60,52)
+    button_share.x = button_leader.x + 80
+    button_share.y = button_leader.y
+    button_share.id = "share"
+    
     local gotReward = false
     local rewardX = overRect.x + 52
     local rewardY = overRect.y + 10

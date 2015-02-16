@@ -48,9 +48,9 @@ local useColour = 1
 local colorInt = 0 	
 local colorMax = 3	
 local lineColors = {
-	{84/255, 172/255, 210/255},  -- line Color
-	{147/255, 101/255, 184/255},
-	{97/255, 189/255, 109/255},
+	{184/255, 239/255, 206/255},
+	{233/255, 184/255, 239/255},
+	{200/255, 200/255, 200/255},  -- line Color
 }
 local backgroundTouched
 local updateScore 
@@ -115,7 +115,8 @@ function updateScore()
 		end
 	end
 end
-
+local block_1
+local block_2
 function makeSection()
 		local width_1, width_2 
 	if nextSectionWidth ~= 0 then 
@@ -130,6 +131,8 @@ function makeSection()
 	horizontal_1.anchorX = 0 
 	horizontal_1.anchorY = 1
 	horizontal_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
+	horizontal_1:setStrokeColor( 0, 0 ,0 )
+	horizontal_1.strokeWidth = 3
 	horizontal_1.id = "block"
 	physics.addBody(horizontal_1, "static")
 
@@ -137,6 +140,8 @@ function makeSection()
 	horizontal_2.anchorX = 0 
 	horizontal_2.anchorY = 1
 	horizontal_2:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
+	horizontal_2:setStrokeColor( 0, 0 ,0 )
+	horizontal_2.strokeWidth = 3
 	horizontal_2.id = "block"
 	physics.addBody(horizontal_2, "static")
 
@@ -155,11 +160,16 @@ function makeSection()
 
 	local block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
 	block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
+	block_1:setStrokeColor( 0, 0 ,0 )
+	block_1.strokeWidth = 3
 	block_1.id = "block"
+	
 	physics.addBody(block_1, "static")
 
 	local block_2 = display.newRect(gameGroup, x_2, block_1.y - block_1.height/2 - yOffset, 24, 24)
 	block_2:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
+	block_2:setStrokeColor( 0, 0 ,0 )
+ 	block_2.strokeWidth = 3
 	block_2.id = "block"
 	physics.addBody(block_2, "static")
 end

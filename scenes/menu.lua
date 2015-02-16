@@ -25,8 +25,9 @@ local button_leader
 local button_vol
 local button_iap
 local copyright
-
-
+local physics = require ("physics") 
+physics.setDrawMode( "normal" ) 
+physics.start()
 local copyrightText = "© 2015 28miStudio"
 local useVolImage = "button_small_vol1"
 if masterVolume == 0 then 
@@ -57,9 +58,22 @@ local function buttonTouched(event)
 			if event.x >= b.xMin and event.x <= b.xMax and event.y >= b.yMin and event.y <= b.yMax then 
 				playSound("select")
 
-                if id == "play" then 
-    				composer.gotoScene( "scenes.game", {effect="crossFade", time=200} )
+                if id == "play" then
+                 physics.addBody( button_play, "dynamic" )
+                 button_play:applyLinearImpulse( 0.5 , -0.5 , button_play.x, button_play.y )
+    				     button_play.gravityScale =2
+                 physics.addBody( button_rate, "dynamic" )
+                 button_rate:applyLinearImpulse( -0.5 , -0.5 , button_play.x, button_play.y )
+                 button_rate.gravityScale =2
+                 physics.addBody( button_leader, "dynamic" )
+                 button_leader:applyLinearImpulse( 0.5 , -0.5 , button_play.x, button_play.y )
+                 button_leader.gravityScale =2                     				     
+    				      local function listener( event )
+    composer.gotoScene( "scenes.game", {effect="crossFade", time=500} )
+end
 
+timer.performWithDelay( 500, listener )
+                 
                  elseif id == "leader" then 
                     scoring.showLeaderboards()
 
@@ -120,26 +134,26 @@ function scene:create( event )
 	title.x = _W*0.5 
 	title.y = _H*0.25
 
-	button_rate = display.newImageRect(bgGroup,"images/button_rate.png",114,36)
-    button_rate.x = _W*0.5 
-    button_rate.y = _H*0.5
+    button_play = display.newImageRect(bgGroup,"images/button_play.png",100,92)
+    button_play.x = _W*0.5--button_rate.x - 64
+    button_play.y = _H*0.5--button_rate.y + 56
+    button_play.id = "play"
+  
+	button_rate = display.newImageRect(bgGroup,"images/button_rate.png",80,72)
+    button_rate.x = button_play.x - 60
+    button_rate.y = button_play.y + 90
     button_rate.id = "rate"
 
-    button_play = display.newImageRect(bgGroup,"images/button_play.png",114,36)
-    button_play.x = button_rate.x - 64
-    button_play.y = button_rate.y + 56
-    button_play.id = "play"
-
-    button_leader = display.newImageRect(bgGroup,"images/button_leader.png",114,36)
-    button_leader.x = button_rate.x + 64
-    button_leader.y = button_play.y
+    button_leader = display.newImageRect(bgGroup,"images/button_leader.png",80,72)
+    button_leader.x = button_play.x + 60
+    button_leader.y = button_rate.y
     button_leader.id = "leader"
 
 
 
     button_vol = display.newImageRect(bgGroup,"images/"..useVolImage..".png",36,36)
-    button_vol.x = button_rate.x + 0
-    button_vol.y = button_play.y + 56
+    button_vol.x = button_play.x + 0
+    button_vol.y = button_rate.y + 56
     button_vol.id = "vol"
 
     copyright = display.newText({parent=bgGroup, text=copyrightText, x=_W*0.5, y=_H-70, font=native.systemFont, fontSize=10})
