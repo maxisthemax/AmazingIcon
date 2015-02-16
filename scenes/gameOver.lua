@@ -89,14 +89,14 @@ function scene:create( event )
     background = display.newRect(bgGroup,_W*0.5,_H*0.5,_W,_H)
     background:setFillColor(backgroundColour[1],backgroundColour[2],backgroundColour[3])
 
-	title = display.newText({parent=bgGroup,text="GAME OVER",font=native.systemFont,fontSize=28})
-	title.x = _W*0.5 
-	title.y = _H*0.22
-    title:setFillColor(textColour[1],textColour[2],textColour[3])
+    local gameover = display.newImageRect(bgGroup,"images/gameover.png",162,80)
+    gameover.x = _W*0.5
+    gameover.y = _H*0.22
+    gameover.id = "gameover"
 
     overRect = display.newImageRect(bgGroup,"images/overRect.png", 230, 150)
-    overRect.x = title.x
-    overRect.y = mF(title.y + overRect.height/2 + 34)
+    overRect.x = gameover.x
+    overRect.y = mF(gameover.y + 10 + overRect.height/2 + 34)
 
     scoreText1 = display.newText({parent=bgGroup,text=currentScore,font=native.systemFont,fontSize=24,align="left"})
     scoreText1.anchorX = 0

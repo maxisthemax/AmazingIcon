@@ -130,7 +130,7 @@ function scene:create( event )
     background:setFillColor(backgroundColour[1],backgroundColour[2],backgroundColour[3])
 	
 	-- Set up the various sprites + text
-	title = display.newImageRect(bgGroup,"images/title.png",180,80)
+	title = display.newImageRect(bgGroup,"images/title.png",278,90)
 	title.x = _W*0.5 
 	title.y = _H*0.25
 
