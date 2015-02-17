@@ -122,6 +122,7 @@ function gameOver()
 	db:close()
 	timer.performWithDelay(1000, function()
 		composer.gotoScene( "scenes.gameOver", {effect="crossFade", time=200, params={currentScore=currentScore, bestScore=bestScore}} )
+		display.remove(player)
 	end, 1)
 end
 
@@ -129,12 +130,11 @@ function updateScore()
 	currentScore = currentScore + 1
 	text_score.text = currentScore
 	playSound("score")
-
+      
 	colorInt = colorInt + 1
 	if colorInt >= colorMax then 
 		colorInt = 0
 		useColour = useColour + 1
-
 		if useColour > #lineColors then 
 			useColour = 1
 		end
@@ -201,7 +201,13 @@ end
 end
 local spinleft = false
 local spinright = false
+local frame_change = 0
 function backgroundTouched(event)
+  if currentScore == (frame_change + 4) then
+  frame_change = frame_change + 3
+  print(frame_change)
+  player:setFrame(math.random(1,31))
+  end
 	local t = event.target
 	if event.phase == "began" and touchAllowed == true then 
 		display.getCurrentStage():setFocus( t )
@@ -324,14 +330,30 @@ function scene:create( event )
 	text_score.x = _W-8
 	text_score.y = 4
 	text_score:setFillColor(textColour[1],textColour[2],textColour[3])
-
-	player = display.newImageRect(uiGroup, "images/player.png", 32, 32)
+  local options =
+  {
+    width=32,
+    height=32,
+    numFrames = 31,
+    sheetContentWidth = 992,
+    sheetContentHeight = 32  -- height of original 1x size of entire sheet
+  }
+  local sequenceData = 
+  {
+    name = "player",
+    start = 1,
+    count = 31,
+  }
+  local Sheet = graphics.newImageSheet( "images/player.png", options )
+  --player:setFrame(1)
+	--player = display.newImageRect(uiGroup, "images/player.png", 32, 32)
+	player = display.newSprite( Sheet, sequenceData )
 	player.x = _W*0.5
 	player.y = _H*0.7
 	--player:setFillColor(38 / 255, 38 / 255, 38 / 255) -- brick color 
 	player.id = "player"
 	player.isFixedRotation = true
-
+  player:setFrame(math.random(1,31))
 	local w = player.width/2
 	local h = player.height/2
 	local playerShape = { 0,-h, w,0, 0,h, -w,0 }
