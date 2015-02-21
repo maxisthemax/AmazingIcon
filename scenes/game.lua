@@ -28,6 +28,8 @@ local mSin = math.sin
 local background
 local text_score
 local player 
+local player_left
+local player_right 
 local tutorial
 local touchAllowed = true 
 local isGameOver = false
@@ -84,7 +86,6 @@ local onCollision
 local makeSection
 local level1 = math.random(3,5)
 local level2 = math.random(10,12)
-
 -----------------------------------------------
 --*** Other Functions ***
 -----------------------------------------------
@@ -140,8 +141,6 @@ function updateScore()
 		end
 	end
 end
-local block_1
-local block_2
 function makeSection()
 		local width_1, width_2 
 	if nextSectionWidth ~= 0 then 
@@ -182,16 +181,18 @@ function makeSection()
 	local x_2 = mR( width_1-xOffset, width_1+sectionGapWidth+xOffset )
 
 	local yOffset = math.round(320/(sectionBlockAmount+1))
-	local block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
-if currentScore > level1 then
+	local block_1
+	local block_2
+if currentScore > level1 then	
+	block_1 = display.newRect(gameGroup, x_1, horizontal_1.y - horizontal_1.height - yOffset, 24, 24)
 	block_1:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
 	block_1:setStrokeColor( 0, 0 ,0 )
 	block_1.strokeWidth = 3
 	block_1.id = "block"
 	physics.addBody(block_1, "static")
-end
-	local block_2 = display.newRect(gameGroup, x_2, block_1.y - block_1.height/2 - yOffset, 24, 24)
+end	
 if currentScore > level2 then
+	block_2 = display.newRect(gameGroup, x_2, block_1.y - block_1.height/2 - yOffset, 24, 24)
 	block_2:setFillColor(lineColors[useColour][1], lineColors[useColour][2], lineColors[useColour][3])
 	block_2:setStrokeColor( 0, 0 ,0 )
  	block_2.strokeWidth = 3
@@ -205,7 +206,6 @@ local frame_change = 0
 function backgroundTouched(event)
   if currentScore == (frame_change + 4) then
   frame_change = frame_change + 3
-  print(frame_change)
   player:setFrame(math.random(1,31))
   end
 	local t = event.target
@@ -217,6 +217,10 @@ function backgroundTouched(event)
 			tutorialActive = false 
 			physics.setGravity(0,worldGravity)
 			display.remove(tutorial)
+			display.remove(player_left)
+			display.remove(player_right)
+			player_left = nil
+			player_right = nil
 			tutorial = nil
 		end
 
@@ -347,13 +351,18 @@ function scene:create( event )
   local Sheet = graphics.newImageSheet( "images/player.png", options )
   --player:setFrame(1)
 	--player = display.newImageRect(uiGroup, "images/player.png", 32, 32)
-	player = display.newSprite( Sheet, sequenceData )
+	player = display.newSprite(uiGroup, Sheet, sequenceData )
 	player.x = _W*0.5
 	player.y = _H*0.7
+	player_left = display.newSprite( Sheet, sequenceData )
+	player_right = display.newSprite( Sheet, sequenceData )
 	--player:setFillColor(38 / 255, 38 / 255, 38 / 255) -- brick color 
 	player.id = "player"
 	player.isFixedRotation = true
-  player:setFrame(math.random(1,31))
+	local random_frame = math.random(1,31)
+  player:setFrame((random_frame))
+  player_left:setFrame((random_frame))
+  player_right:setFrame((random_frame))
 	local w = player.width/2
 	local h = player.height/2
 	local playerShape = { 0,-h, w,0, 0,h, -w,0 }
@@ -362,7 +371,12 @@ function scene:create( event )
 	tutorial = display.newImageRect(uiGroup, "images/tutorial.png",160, 140)
   tutorial.x = player.x 
   tutorial.y = player.y
-
+  player_left.x = tutorial.x - 63
+  player_left.y = tutorial.y - 50
+  player_right.x = tutorial.x + 63
+  player_right.y = tutorial.y - 50
+  player_left.rotation = -45
+  player_right.rotation = 45
 	makeSection()
 end
 

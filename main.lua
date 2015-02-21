@@ -15,14 +15,14 @@ display.setDefault("background", 1, 1, 1)
 local composer = require("composer")
 composer.recycleOnSceneChange = true 
 
-_G.backgroundColour = {1,1,1} 		
+_G.backgroundColour = {224/255,224/255,224/255} 		
 _G.textColour = {0,0,0} 					
 _G.masterVolume = 1 					
 _G.platform = system.getInfo( "platformName" )
 
 
 _G.leaderboardInfo = {
-	android = "CgkIkMCgvqkDEAIQAQ"
+	android = "CgkIz9uam64aEAIQAQ"
 }
 _G.scoring = require("asset.scoring")
 
@@ -53,9 +53,9 @@ function playSound(name)
 end
 
 local AdMob = require("ads")
-local interstitialAppID = "ca-app-pub-1646953303228130/4431601400" -- Interstitial
+local interstitialAppID = "ca-app-pub-3253799636914164/1879426736" -- Interstitial
 if platform == "Android" then
-    adMobId = "ca-app-pub-1646953303228130/2954868202" -- Banner
+    adMobId = "ca-app-pub-3253799636914164/4972493931" -- Banner
 end
 
 local function adMobListener(event)

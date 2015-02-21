@@ -28,7 +28,7 @@ local copyright
 local physics = require ("physics") 
 physics.setDrawMode( "normal" ) 
 physics.start()
-local copyrightText = "© 2015 28miStudio"
+local copyrightText = "© 2015 Maxisthemax Studio"
 local useVolImage = "button_small_vol1"
 if masterVolume == 0 then 
     useVolImage = "button_small_vol2"
@@ -105,17 +105,30 @@ timer.performWithDelay( 500, listener )
                     button_vol.id = "vol"
                     button_vol:addEventListener("touch", buttonTouched)
 
-                elseif id == "rate" then 
+ elseif id == "rate" then 
+
                     local options =
+
                     {
-                                          supportedAndroidStores = { "samsung", "google", "amazon" },
+
+              
+
+                       supportedAndroidStores = { "google", "samsung", "amazon", "nook" },
+
                     }
-       
+
+                    native.showPopup( "appStore", options )
+
                 end
-			end
-		end
-	end
-	return true
+
+      end
+
+    end
+
+  end
+
+  return true
+
 end
 
 

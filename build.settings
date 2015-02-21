@@ -56,7 +56,7 @@ settings =
 
  android =
     {
-        googlePlayGamesAppId = "114215624720",
+        googlePlayGamesAppId = "905758289359",
         usesPermissions =
         {
             "android.permission.INTERNET",
